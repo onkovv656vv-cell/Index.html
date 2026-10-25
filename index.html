@@ -12,6 +12,10 @@
             font-family: "Times New Roman", Times, serif;
             margin: 0;
             padding: 20px;
+            /* Обои в стиле 90-х */
+            background-image: repeating-linear-gradient(45deg, #c0c0c0 25%, transparent 25%, transparent 75%, #c0c0c0 75%, #c0c0c0), repeating-linear-gradient(45deg, #c0c0c0 25%, #b0b0b0 25%, #b0b0b0 75%, #c0c0c0 75%, #c0c0c0);
+            background-position: 0 0, 10px 10px;
+            background-size: 20px 20px;
         }
 
         .retro-container {
@@ -21,15 +25,25 @@
             border: 3px outset #ffffff;
             padding: 20px;
             box-shadow: 5px 5px 0px #000000;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Мигающий заголовок */
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
         }
 
         h1 {
             color: #000080;
             text-align: center;
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 32px;
+            font-family: "Courier New", Courier, monospace; /* Шрифт терминала */
+            font-size: 36px;
             margin-top: 0;
-            text-shadow: 2px 2px 0px #c0c0c0;
+            text-shadow: 2px 2px 0px #ff0000;
+            animation: blink 2s infinite; /* Мигание */
         }
 
         .marquee-box {
@@ -58,9 +72,7 @@
             border-bottom: 2px solid #000000;
             cursor: pointer;
             text-align: center;
-            margin: 20px auto;
-            display: block;
-            width: fit-content;
+            margin: 10px auto;
         }
 
         .retro-btn:active {
@@ -95,9 +107,9 @@
             color: #00ff00;
             padding: 2px 5px;
             border: 1px inset #c0c0c0;
+            font-size: 18px;
         }
 
-        /* Стили для блока с хешем */
         .hash-box {
             background-color: #000000;
             color: #00ff00;
@@ -110,15 +122,120 @@
             word-wrap: break-word;
             max-width: 90%;
         }
+
+        /* --- ГОСТЕВАЯ КНИГА --- */
+        .guestbook {
+            background-color: #e0e0e0;
+            border: 2px inset #ffffff;
+            padding: 10px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .guestbook input, .guestbook textarea {
+            width: 95%;
+            margin-bottom: 10px;
+            border: 2px inset #c0c0c0;
+            padding: 5px;
+            font-family: "Times New Roman", Times, serif;
+            font-size: 14px;
+        }
+        .comment {
+            background: #ffffff;
+            border: 1px solid #000;
+            padding: 5px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .comment strong { color: #000080; }
+
+        /* --- ОКНО ОШИБКИ WINDOWS 95 --- */
+        .win95-window {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            background-color: #c0c0c0;
+            border-top: 2px solid #ffffff;
+            border-left: 2px solid #ffffff;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+            z-index: 9999;
+            display: none; /* Скрыто по умолчанию */
+            font-family: "MS Sans Serif", Arial, sans-serif;
+        }
+        .win95-titlebar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            color: #ffffff;
+            padding: 3px 5px;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: grab;
+        }
+        .win95-titlebar button {
+            background-color: #c0c0c0;
+            border-top: 1px solid #ffffff;
+            border-left: 1px solid #ffffff;
+            border-right: 1px solid #000000;
+            border-bottom: 1px solid #000000;
+            color: #000;
+            font-weight: bold;
+            width: 20px;
+            height: 20px;
+            padding: 0;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .win95-titlebar button:active {
+            border-top: 1px solid #000000;
+            border-left: 1px solid #000000;
+            border-right: 1px solid #ffffff;
+            border-bottom: 1px solid #ffffff;
+        }
+        .win95-content {
+            padding: 15px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .win95-icon {
+            font-size: 32px;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Фейковое окно ошибки -->
+    <div id="errorPopup" class="win95-window">
+        <div class="win95-titlebar" id="dragHandle">
+            <span>Ошибка</span>
+            <button onclick="closePopup()">X</button>
+        </div>
+        <div class="win95-content">
+            <div class="win95-icon">⚠️</div>
+            <div>
+                <b>Ошибка 404:</b><br>
+                Ваш интернет слишком современный! Пожалуйста, переключитесь на Dial-Up.
+            </div>
+        </div>
+        <div style="text-align: center; padding-bottom: 10px;">
+            <button class="retro-btn" onclick="closePopup()" style="width: 80px; padding: 2px;">OK</button>
+        </div>
+    </div>
 
     <div class="retro-container">
         <h1>BYEBYEDPI</h1>
 
         <div class="marquee-box">
-            <marquee>*** Добро пожаловать на официальный сайт BYEBYEDPI! Лучшая утилита для обхода блокировок! ***</marquee>
+            <marquee scrollamount="5">*** ВНИМАНИЕ! ВЫ ЗАШЛИ НА ОФИЦИАЛЬНУЮ СТРАНИЦУ BYEBYEDPI! ***</marquee>
         </div>
 
         <center>
@@ -129,12 +246,10 @@
 
             <p><b>Скачать последнюю версию (v1.8.2):</b></p>
             
-            <!-- ПРЯМАЯ ССЫЛКА НА СКАЧИВАНИЕ APK -->
             <a href="https://github.com/romanvht/ByeByeDPI/releases/download/v.1.8.2/ByeByeDPI-v1.8.2-arm64-v8a-release.apk" download class="retro-btn">
                 [ СКАЧАТЬ ФАЙЛ ]
             </a>
 
-            <!-- Блок с хешем -->
             <p style="font-size: 14px; margin-bottom: 5px;"><b>SHA-256 контрольная сумма:</b></p>
             <div class="hash-box">
                 ec24d44c2f20240a4a55f88d78f4715c017e0c849cd56165ccf128d98c5c3470
@@ -148,13 +263,26 @@
                 2. Дождитесь загрузки файла.<br>
                 3. Проверьте хеш (по желанию).<br>
                 4. Откройте файл и установите программу.<br>
-                5. Запустите и наслаждайтесь свободным интернетом!
+                5. Запустите и наслаждайтесь!
             </p>
 
             <hr>
             
+            <!-- ГОСТЕВАЯ КНИГА -->
+            <div class="guestbook">
+                <h3 style="margin-top: 0;">📖 Гостевая книга</h3>
+                <form onsubmit="addComment(event)">
+                    <input type="text" id="gName" placeholder="Ваше имя (например, Гость_1998)" required>
+                    <textarea id="gText" placeholder="Ваше сообщение..." rows="3" required></textarea>
+                    <button type="submit" class="retro-btn" style="padding: 5px 15px; margin: 0;">Отправить</button>
+                </form>
+                <div id="commentsList"></div>
+            </div>
+
+            <hr>
+            
             <p><i>Вы посетитель номер:</i></p>
-            <div class="counter">0001338</div>
+            <div class="counter" id="visitorCounter">0000000</div>
 
         </center>
 
@@ -163,6 +291,95 @@
             <p>Best viewed in Netscape Navigator 4.0 at 800x600 resolution.</p>
         </div>
     </div>
+
+    <!-- МАГИЯ (JavaScript) -->
+    <script>
+        // 1. СЧЕТЧИК ПОСЕЩЕНИЙ (Работает через localStorage)
+        let visits = localStorage.getItem('byebyedpi_visits');
+        if (!visits) {
+            visits = 1337; // Начальное число
+        } else {
+            visits = parseInt(visits) + 1;
+        }
+        localStorage.setItem('byebyedpi_visits', visits);
+        // Красиво форматируем (добавляем нули впереди)
+        document.getElementById('visitorCounter').innerText = String(visits).padStart(7, '0');
+
+
+        // 2. ГОСТЕВАЯ КНИГА
+        function addComment(e) {
+            e.preventDefault(); // Останавливаем перезагрузку страницы
+            const name = document.getElementById('gName').value;
+            const text = document.getElementById('gText').value;
+            
+            const commentDiv = document.createElement('div');
+            commentDiv.className = 'comment';
+            commentDiv.innerHTML = `<strong>${name}:</strong> <br>${text}`;
+            
+            document.getElementById('commentsList').prepend(commentDiv);
+            
+            // Очищаем поля
+            document.getElementById('gName').value = '';
+            document.getElementById('gText').value = '';
+        }
+
+
+        // 3. ОКНО ОШИБКИ (Появление и перетаскивание)
+        const popup = document.getElementById('errorPopup');
+        const dragHandle = document.getElementById('dragHandle');
+
+        // Показываем окно через 2 секунды после загрузки
+        setTimeout(() => {
+            popup.style.display = 'block';
+        }, 2000);
+
+        function closePopup() {
+            popup.style.display = 'none';
+        }
+
+        // Перетаскивание (поддержка мыши и тачскрина)
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        dragHandle.addEventListener('mousedown', startDrag);
+        dragHandle.addEventListener('touchstart', startDrag, {passive: false});
+
+        function startDrag(e) {
+            isDragging = true;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            const rect = popup.getBoundingClientRect();
+            offsetX = clientX - rect.left;
+            offsetY = clientY - rect.top;
+            
+            // Убираем центрирование, чтобы окно не прыгало
+            popup.style.transform = 'none';
+            popup.style.left = rect.left + 'px';
+            popup.style.top = rect.top + 'px';
+        }
+
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('touchmove', drag, {passive: false});
+
+        function drag(e) {
+            if (!isDragging) return;
+            e.preventDefault(); // Останавливаем скролл страницы при перетаскивании
+            
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            popup.style.left = (clientX - offsetX) + 'px';
+            popup.style.top = (clientY - offsetY) + 'px';
+        }
+
+        document.addEventListener('mouseup', stopDrag);
+        document.addEventListener('touchend', stopDrag);
+
+        function stopDrag() {
+            isDragging = false;
+        }
+    </script>
 
 </body>
 </html>
