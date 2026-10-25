@@ -12,7 +12,6 @@
             font-family: "Times New Roman", Times, serif;
             margin: 0;
             padding: 20px;
-            /* Обои в стиле 90-х */
             background-image: repeating-linear-gradient(45deg, #c0c0c0 25%, transparent 25%, transparent 75%, #c0c0c0 75%, #c0c0c0), repeating-linear-gradient(45deg, #c0c0c0 25%, #b0b0b0 25%, #b0b0b0 75%, #c0c0c0 75%, #c0c0c0);
             background-position: 0 0, 10px 10px;
             background-size: 20px 20px;
@@ -29,7 +28,6 @@
             z-index: 10;
         }
 
-        /* Мигающий заголовок */
         @keyframes blink {
             0% { opacity: 1; }
             50% { opacity: 0; }
@@ -39,11 +37,11 @@
         h1 {
             color: #000080;
             text-align: center;
-            font-family: "Courier New", Courier, monospace; /* Шрифт терминала */
+            font-family: "Courier New", Courier, monospace;
             font-size: 36px;
             margin-top: 0;
             text-shadow: 2px 2px 0px #ff0000;
-            animation: blink 2s infinite; /* Мигание */
+            animation: blink 2s infinite;
         }
 
         .marquee-box {
@@ -56,7 +54,6 @@
             border: 2px inset #c0c0c0;
         }
 
-        /* Кнопка в стиле Windows 95 */
         .retro-btn {
             display: inline-block;
             background-color: #c0c0c0;
@@ -145,8 +142,17 @@
             padding: 5px;
             margin-top: 10px;
             font-size: 14px;
+            word-wrap: break-word;
         }
         .comment strong { color: #000080; }
+        
+        .admin-warning {
+            color: #ff0000;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
 
         /* --- ОКНО ОШИБКИ WINDOWS 95 --- */
         .win95-window {
@@ -162,7 +168,7 @@
             border-bottom: 2px solid #000000;
             box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
             z-index: 9999;
-            display: none; /* Скрыто по умолчанию */
+            display: none;
             font-family: "MS Sans Serif", Arial, sans-serif;
         }
         .win95-titlebar {
@@ -206,9 +212,7 @@
             align-items: center;
             gap: 10px;
         }
-        .win95-icon {
-            font-size: 32px;
-        }
+        .win95-icon { font-size: 32px; }
     </style>
 </head>
 <body>
@@ -271,8 +275,9 @@
             <!-- ГОСТЕВАЯ КНИГА -->
             <div class="guestbook">
                 <h3 style="margin-top: 0;">📖 Гостевая книга</h3>
+                <span class="admin-warning">* Имена Администратора и Крейтеров зарезервированы!</span>
                 <form onsubmit="addComment(event)">
-                    <input type="text" id="gName" placeholder="Ваше имя (например, Гость_1998)" required>
+                    <input type="text" id="gName" placeholder="Ваше имя" required>
                     <textarea id="gText" placeholder="Ваше сообщение..." rows="3" required></textarea>
                     <button type="submit" class="retro-btn" style="padding: 5px 15px; margin: 0;">Отправить</button>
                 </form>
@@ -294,27 +299,48 @@
 
     <!-- МАГИЯ (JavaScript) -->
     <script>
-        // 1. СЧЕТЧИК ПОСЕЩЕНИЙ (Работает через localStorage)
+        // 1. СЧЕТЧИК ПОСЕЩЕНИЙ
         let visits = localStorage.getItem('byebyedpi_visits');
         if (!visits) {
-            visits = 1337; // Начальное число
+            visits = 1337;
         } else {
             visits = parseInt(visits) + 1;
         }
         localStorage.setItem('byebyedpi_visits', visits);
-        // Красиво форматируем (добавляем нули впереди)
         document.getElementById('visitorCounter').innerText = String(visits).padStart(7, '0');
 
 
-        // 2. ГОСТЕВАЯ КНИГА
+        // 2. ГОСТЕВАЯ КНИГА (С ЗАЩИТОЙ ИМЕН)
         function addComment(e) {
-            e.preventDefault(); // Останавливаем перезагрузку страницы
-            const name = document.getElementById('gName').value;
+            e.preventDefault(); 
+            
+            const name = document.getElementById('gName').value.trim();
             const text = document.getElementById('gText').value;
             
+            // Приводим имя к нижнему регистру для проверки (чтобы "Админ" и "админ" считались одинаковыми)
+            const lowerName = name.toLowerCase();
+            
+            // Список запрещенных имен (зарезервировано для тебя)
+            const bannedNames = ["администратор", "admin", "крейтер 1", "крейтер 2", "крейтер1", "крейтер2", "создатель", "владелец"];
+
+            if (bannedNames.includes(lowerName)) {
+                // Если имя в списке, требуем пароль
+                const password = prompt("ОШИБКА 403: Введите секретный код администратора (Подсказка: год основания сайта):");
+                
+                if (password !== "1998") {
+                    alert("НЕВЕРНЫЙ ПАРОЛЬ! Попытка подделки личности зафиксирована. Система защиты Windows 95 активирована.");
+                    return; // Прерываем выполнение, сообщение не добавляется
+                }
+            }
+
+            // Если пароль верный или имя обычное — добавляем коммент
             const commentDiv = document.createElement('div');
             commentDiv.className = 'comment';
-            commentDiv.innerHTML = `<strong>${name}:</strong> <br>${text}`;
+            
+            // Выделяем админа зеленым цветом
+            let nameColor = bannedNames.includes(lowerName) ? "green" : "#000080";
+            
+            commentDiv.innerHTML = `<strong style="color: ${nameColor};">${name}:</strong> <br>${text}`;
             
             document.getElementById('commentsList').prepend(commentDiv);
             
@@ -324,11 +350,10 @@
         }
 
 
-        // 3. ОКНО ОШИБКИ (Появление и перетаскивание)
+        // 3. ОКНО ОШИБКИ
         const popup = document.getElementById('errorPopup');
         const dragHandle = document.getElementById('dragHandle');
 
-        // Показываем окно через 2 секунды после загрузки
         setTimeout(() => {
             popup.style.display = 'block';
         }, 2000);
@@ -337,7 +362,6 @@
             popup.style.display = 'none';
         }
 
-        // Перетаскивание (поддержка мыши и тачскрина)
         let isDragging = false;
         let offsetX, offsetY;
 
@@ -353,7 +377,6 @@
             offsetX = clientX - rect.left;
             offsetY = clientY - rect.top;
             
-            // Убираем центрирование, чтобы окно не прыгало
             popup.style.transform = 'none';
             popup.style.left = rect.left + 'px';
             popup.style.top = rect.top + 'px';
@@ -364,7 +387,7 @@
 
         function drag(e) {
             if (!isDragging) return;
-            e.preventDefault(); // Останавливаем скролл страницы при перетаскивании
+            e.preventDefault(); 
             
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
             const clientY = e.touches ? e.touches[0].clientY : e.clientY;
